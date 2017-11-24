@@ -85,13 +85,7 @@ async function deleteConfig (tableName: string = 'lambda-configurations', docume
 }
 
 export function handler (event: any, context: any, callback: Function): Promise<any> {
-  //return Promise.resolve(execute(event, context))
-  //  .then(result => callback(null, result))
-  //  .catch(error => callback(error));
   return Promise.resolve(execute(event, context))
-    .then(result => {
-      console.info(JSON.stringify(cache, null, 4));
-      callback(null, result);
-    })
+    .then(result => callback(null, result))
     .catch(error => callback(error));
 }
