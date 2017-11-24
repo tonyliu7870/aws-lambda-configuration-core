@@ -1,0 +1,53 @@
+service: lambda-configuration
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-west-2
+  memorySize: 128
+  timeout: 6
+  environment:
+    STAGE: ${self:custom.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+        - logs:DescribeLogStreams
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:ListItem
+        - dynamodb:DeleteItem
+      Resource: "*"
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+functions:
+  configurationLambda:
+    name: lambda-configuration
+    handler: dist/lambda/handler.handler
+    events:
+      - schedule:
+          name: warm-up-lambda-configuration
+          rate: rate(10 minutes)
+
+resources:
+  Resources:
+    # Make sure you understand the risk: When you use "serverless remove", CloudFormation will automatically delete your table together with all the data
+    configurationTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: lambda-configurations
+        AttributeDefinitions:
+          - AttributeName: configName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: configName
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

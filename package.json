@@ -1,0 +1,24 @@
+{
+  "name": "aws-lambda-configuration-core",
+  "version": "1.0.0",
+  "description": "A set of AWS services to manage the configurations, parameters, preferences, etc anything you want to store in a database instead of hardcode in codes",
+  "main": "dist/index.js",
+  "author": "Tony Liu <gonstl7870@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.14.85",
+    "@types/node": "^8.0.51",
+    "aws-sdk": "^2.149.0",
+    "jasmine": "^2.8.0",
+    "nyc": "^11.3.0",
+    "serverless": "^1.24.1",
+    "typescript": "^2.6.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "scripts": {
+    "build": "rm -r dist/ && tsc -p tsconfig.json",
+    "deploy": "sh deploy_serverless.sh"
+  }
+}

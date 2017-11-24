@@ -1,0 +1,41 @@
+{
+  "defaultSeverity": "error",
+  "extends": "tslint:recommended",
+  "jsRules": {
+    "max-line-length": {
+      "options": [120]
+    }
+  },
+  "rules": {
+    "no-relative-imports": false,
+    "missing-jsdoc": false,
+    "prefer-type-cast": false,
+    "no-angle-bracket-type-assertion": true,
+    "strict-boolean-expressions": false,
+    "no-any": false,
+    "no-empty-interface": false,
+    "no-unsafe-any": false,
+    "no-invalid-this": false,
+    "no-non-null-assertion": false,
+    "no-void-expression": [
+      true,
+      "ignore-arrow-function-shorthand"
+    ],
+    "function-name": false,
+    "interface-name": false,
+    "export-name": false,
+    "variable-name": false,
+    "typedef": false,
+    "mocha-no-side-effect-code": false,
+    "no-increment-decrement": false,
+    "newline-before-return": false,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "singleline": "never"
+      }
+    ]
+  },
+  "rulesDirectory": []
+}
