@@ -1,3 +1,4 @@
+[aws-lambda-configuration front page](https://github.com/tonyliu7870/aws-lambda-configuration)
 # Installation Guide
 1. Download the source code  
 Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aws-lambda-configuration-core.git` **or** fork your own version.  
@@ -17,7 +18,7 @@ Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aw
   
 # API  
 This is a generic function to handle all CRUD of the configuration.  
-  
+
 | Parameter | Required? | Description |  
 | --- | --- | --- |  
 | tableName | required | The dynamoDB table name used to store all the configurations. (default to be "lambda-configurations" but strongly recommended to be set) |  
@@ -105,7 +106,7 @@ Note: You can not directly set a config via a virtual path, e.g. `"key": "someth
 ```
 {
   "tableName": "myConfigTable",
-  "documentName": "user:id:012345",
+  "documentName": "user.id.012345",
   "type": "CHECK"
   // "key": "abcdef"
 }
