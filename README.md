@@ -17,8 +17,8 @@ Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aw
   
 # API  
 This is a generic function to handle all CRUD of the configuration.
-| Parameter | Required? | Description |
-| --- | --- | --- |
+| Parameter | Required? | Description |  
+| --- | --- | --- |  
 | tableName | required | The dynamoDB table name used to store all the configurations. (default to be "lambda-configurations" but strongly recommended to be set) |  
 | documentName | required | The document name in the table to access the config. (default to be "settings" but strongly recommended to be set) |  
 | type | required | What to do with the config. Accept: "GET", "PUT", "DELETE", "CHECK" |  
