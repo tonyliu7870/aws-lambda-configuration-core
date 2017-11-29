@@ -2,18 +2,18 @@ import { Lambda } from 'aws-sdk';
 import { get as _get, pick as _pick } from 'lodash';
 import { Cache } from '../lib/cache';
 import { putItem, updatePartialItem, getItem, deleteItem, deletePartialItem } from '../lib/dynamo';
-import { Event, CloudWatchEvent, ConfigEvent, UpdateType, CacheExpiredError, CacheNotFoundError, DocumentNotFound, ActionNotFound } from '../public';
+import { Event, CloudWatchEvent, ConfigEvent, UpdateType, CacheExpiredError, CacheNotFoundError, DocumentNotFound, TypeNotFound } from '../public';
 
 const bootUpTime = new Date().toISOString();
 let count = 0;
 const cache = new Cache();
 
 async function execute (event: Event, context: any): Promise<any> {
+  cache.cleanExpiredCache();
   // escape warming events
   if ((<CloudWatchEvent>event)['detail-type'] === 'Scheduled Event') {
     console.info(`instance created at ${bootUpTime}`);
     console.info(`#${count++} warm up at ${new Date().toISOString()}`);
-    cache.cleanExpiredCache();
     return;
   }
 
@@ -28,7 +28,7 @@ async function execute (event: Event, context: any): Promise<any> {
     case UpdateType.check:
       return await checkConfig(event.tableName, event.documentName, event.key);
   }
-  return new ActionNotFound(event.type);
+  return new TypeNotFound(event.type);
 }
 
 async function getConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', noCache: boolean = false, key?: string): Promise<any> {

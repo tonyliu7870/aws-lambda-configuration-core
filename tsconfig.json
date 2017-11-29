@@ -5,7 +5,8 @@
     "strict": true,
     "declaration": true,
     "lib": [
-      "ES2015"
+      "ES2015",
+      "esnext.asynciterable"
     ],
     "outDir": "./dist",
     "rootDir": "./src"

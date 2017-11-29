@@ -1,7 +1,11 @@
-[aws-lambda-configuration front page](https://github.com/tonyliu7870/aws-lambda-configuration)
-# Installation Guide
+[aws-lambda-configuration front page](https://github.com/tonyliu7870/aws-lambda-configuration)  
+# Installation Guide (lazy version)  
+Assumed you had already setup your AWS access key, secret key and **region** (either in environment variable, aws profile, or any serverless framework supported way). ref: [serverless - Credentials](https://serverless.com/framework/docs/providers/aws/guide/credentials/)  
+`curl https://raw.githubusercontent.com/tonyliu7870/aws-lambda-configuration-core/master/lazy_setup.sh | bash`  
+  
+# Installation Guide (step-by-step)  
 1. Download the source code  
-Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aws-lambda-configuration-core.git` **or** fork your own version.  
+Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aws-lambda-configuration-core.git` **or** fork your own version(if you would like to save with your own settings).  
 2. Go to directory  
 `cd aws-lambda-configuration/`  
   
@@ -14,7 +18,13 @@ Click "Download ZIP" from github **or** `git clone git@github.com:tonyliu7870/aw
 5. **READ Configuration Storage part below**   
   
 6. Deploy to AWS  
-`yarn deploy -- --stage dev`  
+`yarn deploy -- --stage dev --region us-east-1`  
+  
+# Configuration Storage  
+aws-lambda-configuration use a DynamoDB table to store the configuration. By default, it sets up a new table named *lambda-configurations* for you via CloudFormation. However, it also **DELETE the table BY DEFAULT** when you remove aws-lambda-configuration via CloudFormation.  
+If you do not want to include the DynamoDB resources into CloudFormation (recommended):  
+1. Disable the default table first. Open ./serverless.yml, comment out the whole **resources** part at the end by prepending a **#**.  
+2. Go to your [AWS DynamoDB Console](https://console.aws.amazon.com/dynamodb/home). Create a new table with any *Table Name* and *Table settings*. The table MUST has a *Primary key* named with **configName** and in *String* type.  
   
 # API  
 This is a generic function to handle all CRUD of the configuration.  
@@ -39,14 +49,8 @@ This is a generic function to handle all CRUD of the configuration.
 }
 ```
   
-# Configuration Storage  
-aws-lambda-configuration use a DynamoDB table to store the configuration. By default, it sets up a new table named *lambda-configurations* for you via CloudFormation. However, it also **DELETE the table BY DEFAULT** when you remove aws-lambda-configuration via CloudFormation.  
-If you do not want to include the DynamoDB resources into CloudFormation (recommended):  
-1. Disable the default table first. Open ./serverless.yml, comment out the whole **resources** part at the end by prepending a **#**.  
-2. Go to your [AWS DynamoDB Console](https://console.aws.amazon.com/dynamodb/home). Create a new table with any *Table Name* and *Table settings*. The table MUST has a *Primary key* named with **configName** and in *String* type.  
-  
-# Example  
-## Set (new document/replace whole document) 
+# API Example  
+## Set (new document/replace whole document)  
 ```
 {
   "tableName": "myConfigTable",
@@ -126,4 +130,4 @@ Note: You can not directly set a config via a virtual path, e.g. `"key": "someth
 ```
   
 # Uninstallation Guide  
-run `node_modules/.bin/serverless remove`  
+`node_modules/.bin/serverless remove`  
