@@ -6,7 +6,7 @@ import { Event, CloudWatchEvent, ConfigEvent, UpdateType, CacheExpiredError, Cac
 
 const bootUpTime = new Date().toISOString();
 let count = 0;
-const cache = new Cache();
+const cache = new Cache({ defaultExpires: parseInt(process.env.cacheTimeout!) || 300 });
 
 async function execute (event: Event, context: any): Promise<any> {
   cache.cleanExpiredCache();
@@ -26,12 +26,12 @@ async function execute (event: Event, context: any): Promise<any> {
     case UpdateType.delete:
       return await deleteConfig(event.tableName, event.documentName, event.key);
     case UpdateType.check:
-      return await checkConfig(event.tableName, event.documentName, event.key);
+      return await checkConfig(event.tableName, event.documentName, event.noCache, event.key);
   }
   return new TypeNotFound(event.type);
 }
 
-async function getConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', noCache: boolean = false, key?: string): Promise<any> {
+async function getConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', noCache: boolean = false, key?: string | string[]): Promise<any> {
   let document;
   if (noCache) {
     document = await getItem(tableName, documentName);
@@ -41,19 +41,19 @@ async function getConfig (tableName: string = 'lambda-configurations', documentN
     } catch (error) {
       if (error instanceof CacheExpiredError || error instanceof CacheNotFoundError) {
         document = await getItem(tableName, documentName);
+        cache.setCache(tableName, documentName, document);
       } else {
         throw error;
       }
     }
   }
 
-  cache.setCache(tableName, documentName, document);
   return (key === undefined) ? document : _get(document, key);
 }
 
-async function checkConfig (tableName?: string, documentName?: string, key?: string): Promise<boolean> {
+async function checkConfig (tableName?: string, documentName?: string, noCache: boolean = false, key?: string | string[]): Promise<boolean> {
   try {
-    return await getConfig(tableName, documentName, false, key) !== undefined;
+    return await getConfig(tableName, documentName, noCache, key) !== undefined;
   } catch (error) {
     if (error instanceof DocumentNotFound) {
       return false;
@@ -62,7 +62,7 @@ async function checkConfig (tableName?: string, documentName?: string, key?: str
   }
 }
 
-async function setConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', data: any, key?: string): Promise<void> {
+async function setConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', data: any, key?: string | string[]): Promise<void> {
   if (key === undefined) {
     await putItem(tableName, documentName, data);
     cache.setCache(tableName, documentName, data);
@@ -73,7 +73,7 @@ async function setConfig (tableName: string = 'lambda-configurations', documentN
   return;
 }
 
-async function deleteConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', key?: string): Promise<void> {
+async function deleteConfig (tableName: string = 'lambda-configurations', documentName: string = 'settings', key?: string | string[]): Promise<void> {
   if (key === undefined) {
     await deleteItem(tableName, documentName);
     cache.deleteCache(tableName, documentName);

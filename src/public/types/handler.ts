@@ -17,7 +17,7 @@ export type ConfigEvent = {
   tableName: string;
   documentName: string;
   type: string;
-  key?: string;
+  key?: string | string[];
   data?: any;
   noCache?: boolean;
 }
