@@ -1,5 +1,5 @@
 import { DynamoDB } from 'aws-sdk';
-import { Configuration, DocumentNotFound } from '../public';
+import { Configuration, DocumentNotFoundError } from '../public';
 
 export const dynamo = new DynamoDB.DocumentClient();
 
@@ -35,7 +35,7 @@ export async function getItem (tableName: string, documentName: string): Promise
     ExpressionAttributeNames: { '#data': 'data' },
   }).promise();
   if (response.Item === undefined) {
-    throw new DocumentNotFound(`Request resource ${documentName} not found`);
+    throw new DocumentNotFoundError(`Request resource ${documentName} not found`);
   }
   return (response.Item as Configuration).data;
 }

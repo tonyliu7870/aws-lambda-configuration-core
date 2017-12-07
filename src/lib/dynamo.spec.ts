@@ -1,5 +1,5 @@
 import * as db from './dynamo';
-import { DocumentNotFound } from '../public';
+import { DocumentNotFoundError } from '../public';
 
 describe('dynamo functions', async () => {
   describe('#putItem', async () => {
@@ -81,7 +81,7 @@ describe('dynamo functions', async () => {
       try {
         await db.getItem('my-table', 'abcde');
       } catch (error) {
-        expect(error instanceof DocumentNotFound).toBeTruthy();
+        expect(error instanceof DocumentNotFoundError).toBeTruthy();
       }
     });
   });
