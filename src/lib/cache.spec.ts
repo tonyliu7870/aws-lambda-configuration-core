@@ -4,7 +4,7 @@ import { CacheNotFoundError, CacheExpiredError } from '../public';
 const sampleConfig = {
   'my-table': {
     'my-document': {
-      expires: Date.now() + 1000,
+      expires: Date.now() + 100000,
       data: {
         path: true,
         path1: {
