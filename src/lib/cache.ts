@@ -3,9 +3,9 @@ import { get as _get, set as _set, cloneDeep as _clone, pick as _pick } from 'lo
 import { CacheOptions, CacheStore, CacheRecord, CacheNotFoundError, CacheExpiredError } from '../public';
 
 export class Cache {
-  private cacheStore: CacheStore = {};
+  public cacheStore: CacheStore = {};
   /** @type {number} defaultExpires number of milliseconds to expires. Note: expires internally count as millisecond but you can only configure it in second */
-  protected defaultExpires: number = 300 * 1000;
+  public defaultExpires: number = 300 * 1000;
 
   constructor (options: Partial<CacheOptions> = {}) {
     this.config(options);
@@ -18,10 +18,10 @@ export class Cache {
   }
 
   public setCache (tableName: string, documentName: string, data: object): void {
-    _set(this.cacheStore, `${tableName}.${documentName}`, { expires: Date.now() + this.defaultExpires, data: _clone(data) });
+    _set(this.cacheStore, [tableName, documentName], { expires: Date.now() + this.defaultExpires, data: _clone(data) });
   }
 
-	public getCache<T> (tableName: string, documentName: string, key?: string): T | undefined {
+	public getCache<T> (tableName: string, documentName: string, key?: string | string[]): T | undefined {
     const cache: any = _get(this.cacheStore, `${tableName}.${documentName}`);
     if (!cache) {
       throw new CacheNotFoundError();
@@ -32,7 +32,10 @@ export class Cache {
   }
 
   public deleteCache (tableName: string, documentName: string): void {
-    if (this.cacheStore[tableName] && this.cacheStore[tableName][documentName]) delete this.cacheStore[tableName][documentName];
+    if (this.cacheStore[tableName] && this.cacheStore[tableName][documentName]) {
+      delete this.cacheStore[tableName][documentName];
+      if (Object.keys(this.cacheStore[tableName]).length === 0) delete this.cacheStore[tableName];
+    }
   }
 
   public cleanExpiredCache (): void {

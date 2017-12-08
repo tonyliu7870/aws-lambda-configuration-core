@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
-import { Configuration, DocumentNotFound } from '../public';
+import { Configuration, DocumentNotFoundError } from '../public';
 
-const dynamo = new DynamoDB.DocumentClient();
+export const dynamo = new DynamoDB.DocumentClient();
 
 export async function putItem (tableName: string, documentName: string, data: any): Promise<void> {
   await dynamo.put({
@@ -10,8 +10,8 @@ export async function putItem (tableName: string, documentName: string, data: an
   }).promise();
 }
 
-export async function updatePartialItem (tableName: string, documentName: string, key: string, data: object): Promise<object> {
-  const paths = ('data.' + key).split('.');
+export async function updatePartialItem (tableName: string, documentName: string, key: string | string[], data: object): Promise<object> {
+  const paths = Array.isArray(key) ? ['data', ...key] : ('data.' + key).split('.');
   const updateExpression = `SET ${paths.map((subPath, index) => '#path' + index).join('.')} = :data`;
   const updateKeys: Record<string, string> = {};
   paths.forEach((subPath, index) => updateKeys['#path' + index] = subPath);
@@ -35,7 +35,7 @@ export async function getItem (tableName: string, documentName: string): Promise
     ExpressionAttributeNames: { '#data': 'data' },
   }).promise();
   if (response.Item === undefined) {
-    throw new DocumentNotFound(`Request resource ${documentName} not found`);
+    throw new DocumentNotFoundError(`Request resource ${documentName} not found`);
   }
   return (response.Item as Configuration).data;
 }
@@ -47,8 +47,8 @@ export async function deleteItem (tableName: string, documentName: string): Prom
   }).promise();
 }
 
-export async function deletePartialItem (tableName: string, documentName: string, key: string): Promise<object> {
-  const paths = ('data.' + key).split('.');
+export async function deletePartialItem (tableName: string, documentName: string, key: string | string[]): Promise<object> {
+  const paths = Array.isArray(key) ? ['data', ...key] : ('data.' + key).split('.');
   const updateExpression = `REMOVE ${paths.map((subPath, index) => '#path' + index).join('.')}`;
   const updateKeys: Record<string, string> = {};
   paths.forEach((subPath, index) => updateKeys['#path' + index] = subPath);
