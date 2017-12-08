@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/tonyliu7870/aws-lambda-configuration-core.svg?style=svg)](https://circleci.com/gh/tonyliu7870/aws-lambda-configuration-core)
+  
 [aws-lambda-configuration front page](https://github.com/tonyliu7870/aws-lambda-configuration)  
   
 Assumed you had already setup your AWS access key, secret key and **region** (either in environment variable, aws profile, or any serverless framework supported way). ref: [serverless - Credentials](https://serverless.com/framework/docs/providers/aws/guide/credentials/)  
